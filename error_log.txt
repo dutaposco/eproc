@@ -1,0 +1,38 @@
+﻿[dotenv@17.3.1] injecting env (4) from .env -- tip: ÔÜÖ´©Å  load multiple .env files with { path: ['.env.local', '.env'] }
+­ƒî▒ Seeding Vendors and Purchase Orders...
+node : ÔØî Seed error: TypeError: Cannot 
+read properties of undefined (reading 
+'upsert')
+At line:1 char:1
++ node 
+d:\eproc\backend\prisma\seed-vendors-po.js 
+2>&1 | out-file -enco ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: 
+    (ÔØî Seed error:...ading 'upsert'):Str  
+  ing) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommand 
+   Error
+ 
+    at main (d:\eproc\backend\prisma\seed-ve
+ndors-po.js:16:44)
+    at Object.<anonymous> (d:\eproc\backend\
+prisma\seed-vendors-po.js:123:1)
+    at Module._compile 
+(node:internal/modules/cjs/loader:1706:14)
+    at Object..js 
+(node:internal/modules/cjs/loader:1839:10)
+    at Module.load 
+(node:internal/modules/cjs/loader:1441:32)
+    at Function._load 
+(node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync 
+(node:diagnostics_channel:322:14)
+    at wrapModuleLoad 
+(node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as 
+runMain] 
+(node:internal/modules/run_main:171:5)
+    at 
+node:internal/main/run_main_module:36:49

@@ -1,0 +1,133 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  STAFF
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String
+  fullName  String   @map("full_name")
+  role      Role     @default(STAFF)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  transactionsCreated Transaction[] @relation("CreatedBy")
+
+  @@map("users")
+}
+
+model Category {
+  id        Int        @id @default(autoincrement())
+  name      String     @unique
+  createdAt DateTime   @default(now()) @map("created_at")
+  materials Material[]
+
+  @@map("categories")
+}
+
+model Material {
+  id         Int      @id @default(autoincrement())
+  code       String   @unique
+  name       String
+  categoryId Int      @map("category_id")
+  unit       String
+  minStock   Int      @default(5) @map("min_stock")
+  price      Float    @default(0)
+  notes      String   @default("")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  category     Category            @relation(fields: [categoryId], references: [id])
+  transactions Transaction[]
+  poItems      PurchaseOrderItem[]
+
+  @@map("materials")
+}
+
+enum TransactionType {
+  IN
+  OUT
+}
+
+enum POStatus {
+  PENDING
+  ORDERED
+  RECEIVED
+  CANCELLED
+}
+
+model PurchaseOrder {
+  id          Int      @id @default(autoincrement())
+  poNumber    String   @unique @map("po_number")
+  vendorId    Int      @map("vendor_id")
+  date        DateTime @default(now())
+  status      POStatus @default(PENDING)
+  totalAmount Float    @default(0) @map("total_amount")
+  notes       String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  vendor Vendor              @relation("VendorToPO", fields: [vendorId], references: [id])
+  items  PurchaseOrderItem[]
+
+  @@map("purchase_orders")
+}
+
+model PurchaseOrderItem {
+  id              Int   @id @default(autoincrement())
+  purchaseOrderId Int   @map("purchase_order_id")
+  materialId      Int   @map("material_id")
+  qty             Int
+  price           Float
+
+  purchaseOrder PurchaseOrder @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
+  material      Material      @relation(fields: [materialId], references: [id])
+
+  @@map("purchase_order_items")
+}
+
+model Vendor {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  contact   String?
+  address   String?
+  phone     String?
+  email     String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  transactions   Transaction[]
+  purchaseOrders PurchaseOrder[] @relation("VendorToPO")
+
+  @@map("vendors")
+}
+
+model Transaction {
+  id           Int             @id @default(autoincrement())
+  type         TransactionType
+  date         DateTime
+  refNo        String          @map("ref_no")
+  materialId   Int             @map("material_id")
+  vendorId     Int?            @map("vendor_id")
+  qty          Int
+  party        String          @default("-")
+  notes        String          @default("-")
+  createdById  Int?            @map("created_by_id")
+  createdAt    DateTime        @default(now()) @map("created_at")
+
+  material  Material @relation(fields: [materialId], references: [id], onDelete: Cascade)
+  vendor    Vendor?  @relation(fields: [vendorId], references: [id])
+  createdBy User?    @relation("CreatedBy", fields: [createdById], references: [id])
+
+  @@map("transactions")
+}
