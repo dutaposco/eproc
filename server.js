@@ -47,6 +47,12 @@ app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-app.listen(PORT, () => {
-    console.log(`🚀 eProcure Backend running on http://localhost:${PORT}`);
-});
+// Lokal: jalankan server biasa
+// Vercel: export app sebagai serverless function
+if (process.env.VERCEL !== '1') {
+    app.listen(PORT, () => {
+        console.log(`🚀 eProcure Backend running on http://localhost:${PORT}`);
+    });
+}
+
+module.exports = app;
